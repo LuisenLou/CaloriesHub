@@ -16,7 +16,7 @@ const Header = () => {
         <View style = {styles.container}>
             <View style = {styles.leftContainer}>
                 <Text style = {styles.profile}>
-                    {'Hello ${staticInfo.name}'}
+                    {`Hello ${staticInfo.name}`}
                 </Text>
                 <Text style = {styles.subtitle}>
                     Welcome back to your goal!!!
@@ -25,7 +25,6 @@ const Header = () => {
             <View style = {styles.rightContainer}>
                 <Image source = {staticInfo.image.source} style = {styles.profileImage}/>
             </View>
-            
         </View>
 
 
@@ -37,24 +36,32 @@ const Header = () => {
 
 const styles = StyleSheet.create({
     container:{
-        flex:2,
-        
+        flexDirection:'row',
+        marginBottom:10,
     },
     leftContainer:{
-
+        flex:1,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
     },
     rightContainer:{
-
+        flex:1,
+        alignItems:'flex-end',
+        justifyContent: 'center',
     },
     profile:{
-
+        fontSize:14,
+        fontWeight: 'bold'
 
     },
     subtitle:{
-
+        fontSize:12,
+        color: '#808080'
     },
     profileImage:{
-
+        width:60,
+        height:60,
+        borderRadius: 30,
     }
 
 
