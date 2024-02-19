@@ -10,11 +10,13 @@ const useFoodStorage = () => {
         const currentSavedFood = await AsyncStorage.getItem(MY_FOOD_KEY);
         if (currentSavedFood !== null){
             const currentSavedFoodParsed = JSON.parse(currentSavedFood);
-            currentSavedFoodParsed.push({
+            currentSavedFoodParsed.push([
+                {
                 calories,
                 name,
                 portion,
-            });
+                }
+            ]);
         await AsyncStorage.setItem(MY_FOOD_KEY,
             JSON.stringify(currentSavedFoodParsed)
         );
