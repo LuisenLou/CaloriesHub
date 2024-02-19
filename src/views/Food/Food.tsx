@@ -64,7 +64,7 @@ const Food = () => {
                                 color="#fff"
                             />
                         }
-                    onPress ={clearAsyncStorage}    
+                        onPress ={clearAsyncStorage}    
                     />
                 </View>
                 <View style = {styles.buttonContainer}>
@@ -90,7 +90,6 @@ const Food = () => {
                     radius = 'lg'
                     color = "#ade8af"
                     titleStyle = {styles.searchButton}
-                    
                 />
             </View>
             <AddFoodModal 
@@ -102,12 +101,8 @@ const Food = () => {
             style={styles.content}>
             {existFood?.map(meal => (<MealItem key={`my-meal-item-${meal.name}`}{...meal}/>))}
             </ScrollView>
-            
         </View>
-        
     )
-
-
 }
 
 const styles = StyleSheet.create ({
@@ -130,7 +125,8 @@ const styles = StyleSheet.create ({
     },
     buttonDContainer:{
         flex: 1,
-        alignItems: 'flex-end'    
+        alignItems: 'flex-end',
+        marginLeft: 200,
     },
     buttonContainer:{
         flex: 1,
