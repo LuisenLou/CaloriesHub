@@ -16,6 +16,7 @@ const Food = () => {
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [existFood, setExistFood] = useState<Meal[]>([]);
     const {onGetFoods} = useFoodStorage();
+    const [search, setSearch] = useState<string>('')
     const loadFood = async() =>{
         try{
             const foodResponse = await onGetFoods();
@@ -41,6 +42,18 @@ const Food = () => {
             console.error(error);
         };
     };
+
+    const handleSearchItem = async() => {
+        try{
+            const result = await onGetFoods();
+            setExistFood(result.filter((item: Meal) => item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())));
+
+        }catch(error){
+            console.error(error);
+            setExistFood([]);
+        }
+
+    }
 
     useEffect(()=>{
         loadFood().catch(null);
@@ -83,13 +96,19 @@ const Food = () => {
             </View>
             <View style = {styles.searchContainer}>
                 <View style = {styles.inputContainer}>
-                        <Input placeholder='apples, fries, soda...'/>
+                        <Input 
+                            placeholder='apples, fries, soda...' 
+                            value={search} 
+                            onChangeText={(text:string) => setSearch(text)
+                            }
+                        />
                 </View>
                 <Button 
                     title = "Search"
                     radius = 'lg'
                     color = "#ade8af"
                     titleStyle = {styles.searchButton}
+                    onPress = {handleSearchItem}
                 />
             </View>
             <AddFoodModal 

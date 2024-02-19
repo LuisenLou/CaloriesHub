@@ -2,38 +2,37 @@ import AsyncStorage  from "@react-native-async-storage/async-storage";
 import { Meal } from "../types";
 
 const MY_FOOD_KEY = '@MyFood:Key';
+const MY_TODAY_FOOD_KEY = '@MyTodayFood:Key';
 
 const useFoodStorage = () => {
-    
+    const saveInfoToStorage = async(stKey: string, meal:Meal) => {
+        try{
+            const currentSavedFood = await AsyncStorage.getItem(stKey);
+            if (currentSavedFood !== null){
+                const currentSavedFoodParsed = JSON.parse(currentSavedFood);
+                currentSavedFoodParsed.push(meal)
+                
+                await AsyncStorage.setItem(stKey,
+                JSON.stringify(currentSavedFoodParsed)
+            );
+            // ERROR  [TypeError: currentSavedFoodParsed.push is not a function (it is undefined)]
+            return Promise.resolve();
+            };
+            await AsyncStorage.setItem(stKey, 
+                JSON.stringify([meal]),
+            );
+            return Promise.resolve();
+        }catch(error){
+            return Promise.reject(error)        
+        }
+    };
     const handleSaveFood = async({calories, name, portion}: Meal) =>{
         try{
-        const currentSavedFood = await AsyncStorage.getItem(MY_FOOD_KEY);
-        if (currentSavedFood !== null){
-            const currentSavedFoodParsed = JSON.parse(currentSavedFood);
-            currentSavedFoodParsed.push(
-                {
-                calories,
-                name,
-                portion,
-                }
-            );
-        await AsyncStorage.setItem(MY_FOOD_KEY,
-            JSON.stringify(currentSavedFoodParsed)
-        );
-        // ERROR  [TypeError: currentSavedFoodParsed.push is not a function (it is undefined)]
-        return Promise.resolve();
-        };
-        await AsyncStorage.setItem(MY_FOOD_KEY, 
-            JSON.stringify([
-                {
-                calories,
-                name,
-                portion,
-                }
-            ]),
-        );
-        return Promise.resolve();
-
+            const result = await saveInfoToStorage(MY_FOOD_KEY, {
+                calories, 
+                name, 
+                portion});
+            return Promise.resolve(result);
         }catch(error){
             return Promise.reject(error)        
         }
@@ -51,9 +50,37 @@ const useFoodStorage = () => {
         }
     }
 
+    const handleSaveTodayFood = async({calories, name, portion}: Meal) => {
+        try{
+            const result = await saveInfoToStorage(MY_TODAY_FOOD_KEY, {
+                calories, 
+                name, 
+                portion,
+                date: new Date().toISOString(),
+            });
+        return Promise.resolve(result);
+        }catch(error){
+            return Promise.reject(error);
+        }
+    }
+
+    const handleGetTodayFood = async() =>{
+        try{
+            const food = await AsyncStorage.getItem(MY_TODAY_FOOD_KEY);
+            if (food !== null){
+                const parsedFood = JSON.parse(food);
+                return Promise.resolve(parsedFood);
+            }
+        }catch(error){
+                return Promise.reject(error);
+        }
+    }
+
     return{
         onSaveFood: handleSaveFood,
         onGetFoods: handleGetFood,
+        onSaveTodayFood: handleSaveTodayFood,
+        onGetTodayFood: handleGetTodayFood,
     };
 };
 

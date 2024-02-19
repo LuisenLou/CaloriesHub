@@ -29,8 +29,7 @@ const AddFoodModal: FC<AddFoodModalPops> = ({onClose, isVisible}) => {
             onClose(true);
         }catch(error){
             console.error(error);
-        }
-        
+        } 
     }
 
     
