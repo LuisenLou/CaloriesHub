@@ -1,22 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import Header from "../../components/Header";
 import { Button, Icon, Input } from "@rneui/themed";
 import AddFoodModal from "../../components/AddFoodModal";
 import useFoodStorage from "../../hooks/useFoodStorage";
+import { Meal } from "../../types";
+import { ScrollView } from "react-native-gesture-handler";
+import MealItem from "../../components/MealItem";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
 const Food = () => {
 
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [existFood, setExistFood] = useState<Meal[]>([]);
     const {onGetFoods} = useFoodStorage();
-    const handleModalClose = (shouldUpdate?: boolean) =>{
+    const loadFood = async() =>{
+        try{
+            const foodResponse = await onGetFoods();
+            setExistFood(foodResponse);
+         }catch (error){
+             console.error(error);
+         }
+
+    }
+    const handleModalClose = async (shouldUpdate?: boolean) =>{
         if(shouldUpdate){
-        Alert.alert('Comida guardada con exito');
+            Alert.alert('Comida guardada con exito');
+            loadFood();
         }
         setIsVisible(false);
     }
+
+    const clearAsyncStorage = async() => {
+        try{
+            await AsyncStorage.clear();
+            loadFood().catch(null);
+        }catch(error){
+            console.error(error);
+        };
+    };
+
+    useEffect(()=>{
+        loadFood().catch(null);
+
+    }, [])
     
     return (
         <View style = {styles.container}>
@@ -24,6 +53,19 @@ const Food = () => {
             <View style = {styles.addFoodContainer}>
                 <View style = {styles.legendContainer}>
                     <Text style= {styles.text}>Add Food</Text>
+                </View>
+                <View style = {styles.buttonDContainer}>
+                    <Button
+                        radius="lg"
+                        color="#dc143c" 
+                        icon = {
+                            <Icon 
+                                name= "remove-circle-outline"
+                                color="#fff"
+                            />
+                        }
+                    onPress ={clearAsyncStorage}    
+                    />
                 </View>
                 <View style = {styles.buttonContainer}>
                     <Button
@@ -55,6 +97,12 @@ const Food = () => {
                 onClose={handleModalClose} 
                 isVisible={isVisible}
             />
+            
+            <ScrollView 
+            style={styles.content}>
+            {existFood?.map(meal => (<MealItem key={`my-meal-item-${meal.name}`}{...meal}/>))}
+            </ScrollView>
+            
         </View>
         
     )
@@ -80,6 +128,10 @@ const styles = StyleSheet.create ({
     legendContainer:{
         flex: 1,
     },
+    buttonDContainer:{
+        flex: 1,
+        alignItems: 'flex-end'    
+    },
     buttonContainer:{
         flex: 1,
         alignItems: 'flex-end'    
@@ -96,7 +148,10 @@ const styles = StyleSheet.create ({
     searchButton:{
         color:'#000',
         fontSize: 14,
-    }
+    },
+    content:{
+        flex:1,
+    },
 
 
 
