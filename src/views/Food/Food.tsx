@@ -49,8 +49,8 @@ const Food = () => {
             setExistFood(result.filter((item: Meal) => item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())));
 
         }catch(error){
-            console.error(error);
             setExistFood([]);
+            console.error(error);
         }
 
     }

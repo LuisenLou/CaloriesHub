@@ -3,15 +3,16 @@ import {StyleSheet, Text, View, Alert} from 'react-native';
 import { Meal } from '../../types';
 import { Button, Icon } from '@rneui/themed';
 import useFoodStorage from '../../hooks/useFoodStorage';
+import Food from '../../views/Food';
 
 
 
 
-const MealItem: FC<Meal> = ({calories, portion, name}) => {
+const MealItem: FC<Meal> = ({calories, portion, name}: Meal) => {
     const {onSaveTodayFood}= useFoodStorage();
     const handleAddItem = async() => {
         try{
-            await onSaveTodayFood({calories, name, portion, name})
+            await onSaveTodayFood({calories, name, portion})
             Alert.alert('Comida agregada al dia');
         }catch(error){
             console.error(error);

@@ -1,0 +1,1 @@
+export const TOTAL_CALORIES_PER_DAY = 2000;

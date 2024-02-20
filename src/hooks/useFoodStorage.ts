@@ -1,6 +1,6 @@
 import AsyncStorage  from "@react-native-async-storage/async-storage";
 import { Meal } from "../types";
-
+import { isToday } from "date-fns";
 const MY_FOOD_KEY = '@MyFood:Key';
 const MY_TODAY_FOOD_KEY = '@MyTodayFood:Key';
 
@@ -11,15 +11,13 @@ const useFoodStorage = () => {
             if (currentSavedFood !== null){
                 const currentSavedFoodParsed = JSON.parse(currentSavedFood);
                 currentSavedFoodParsed.push(meal)
-                
                 await AsyncStorage.setItem(stKey,
                 JSON.stringify(currentSavedFoodParsed)
             );
-            // ERROR  [TypeError: currentSavedFoodParsed.push is not a function (it is undefined)]
-            return Promise.resolve();
+            return Promise.resolve(currentSavedFood);
             };
             await AsyncStorage.setItem(stKey, 
-                JSON.stringify([meal]),
+                JSON.stringify([meal])
             );
             return Promise.resolve();
         }catch(error){
@@ -68,8 +66,10 @@ const useFoodStorage = () => {
         try{
             const food = await AsyncStorage.getItem(MY_TODAY_FOOD_KEY);
             if (food !== null){
-                const parsedFood = JSON.parse(food);
-                return Promise.resolve(parsedFood);
+                const parsedFood = JSON.parse(food) as Meal[];
+                return Promise.resolve(
+                    parsedFood.filter(meal => meal.date && isToday(new Date(meal.date)))
+                );
             }
         }catch(error){
                 return Promise.reject(error);
